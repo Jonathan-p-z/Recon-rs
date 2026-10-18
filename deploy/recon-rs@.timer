@@ -1,0 +1,29 @@
+# recon-rs@<target>.timer — schedule for one target's recon-rs@<target>.service.
+#
+# This TEMPLATE intentionally has NO `OnCalendar=` of its own. Every real instance's
+# actual schedule lives in a per-instance drop-in at
+# ~/.config/systemd/user/recon-rs@<target>.timer.d/schedule.conf — deploy/install.sh
+# creates one for each of the known VF Corporation VDP sub-targets (staggered 4h apart:
+# vfc 00:00, vans 04:00, thenorthface 08:00, timberland 12:00, vfc-int 16:00), and
+# deploy/README.md documents how to add one by hand for any target you add later.
+#
+# Without such a drop-in, an instance's timer loads and enables successfully but simply
+# never fires — a deliberate fail-safe: a target can never silently inherit some other
+# target's schedule, and there is no shared default that could make several targets
+# fire in lockstep by accident. Missing the drop-in fails safe (nothing runs), not
+# unsafe (everything runs at once).
+
+[Unit]
+Description=Schedule for recon-rs@%i.service — see recon-rs@%i.timer.d/schedule.conf for its actual time
+
+[Timer]
+# Spread the actual start time up to 30 minutes after each instance's own OnCalendar
+# fires, so multiple targets (and multiple machines running the same units) don't all
+# wake up in lockstep at exactly their configured second.
+RandomizedDelaySec=30min
+# If the machine was off/asleep when a run was due, run it once at the next boot
+# instead of silently skipping it entirely.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

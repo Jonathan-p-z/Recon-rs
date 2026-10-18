@@ -1,0 +1,55 @@
+# recon-rs@<target>.service — one scan run for one target, triggered by
+# recon-rs@<target>.timer.
+#
+# This is a systemd --user TEMPLATE unit (installed as recon-rs@.service under
+# ~/.config/systemd/user/, never instantiated directly — always as
+# recon-rs@<name>.service, e.g. recon-rs@vfc.service). `%i` below is that <name>. Being
+# a --user unit, it always runs as whatever unprivileged user enabled it — there is no
+# `User=` directive because user-mode units don't run as root and don't need one. Never
+# install this as a system-wide unit or run install.sh with sudo.
+#
+# See deploy/README.md for install/verify/uninstall instructions and how to add a new
+# target, and the reminder there about re-reading the target program's current scope
+# before every new deployment — %i.env only reflects whatever was true when it was
+# last edited.
+
+[Unit]
+Description=recon-rs passive subdomain recon scan for %i (authorized bug bounty engagements only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+
+# %h expands to the invoking user's home directory, %i to the instance name (the part
+# after the @, e.g. `vfc` for recon-rs@vfc.service). One environment file per target —
+# see deploy/README.md and deploy/recon-rs.env.example.
+EnvironmentFile=%h/.config/recon-rs/targets/%i.env
+WorkingDirectory=%h/.config/recon-rs
+
+ExecStart=%h/.local/bin/recon-cli \
+    --target ${TARGET} \
+    --program ${PROGRAM_CONFIG} \
+    --seed-file ${SEED_FILE} \
+    --config %h/.config/recon-rs/config \
+    --output %h/.config/recon-rs/reports
+
+# Deliberately no automatic retry. A failure here (unreachable DATABASE_URL, a target
+# that fails the --program scope check, a malformed config) is very likely to still be
+# true a few seconds later, and this must never turn into a tight retry loop hammering
+# the target — a real bug should surface as one clearly-logged failed run per timer
+# tick, not a flood of requests. If a run fails, it simply waits for
+# recon-rs@%i.timer's next scheduled occurrence.
+Restart=no
+
+# Generous but finite: a large scope at a low, program-mandated requests-per-second can
+# legitimately take a while, but a run must not be able to hang forever (e.g. a wedged
+# DNS server). Raise if a real scan for your program's scope size needs longer.
+TimeoutStartSec=2h
+
+StandardOutput=journal
+StandardError=journal
+# Per-instance syslog identifier (recon-rs-vfc, recon-rs-vans, ...) so
+# `journalctl --user -t recon-rs-<name>` filters to one target's runs without needing
+# -u's exact instantiated unit-name syntax.
+SyslogIdentifier=recon-rs-%i
