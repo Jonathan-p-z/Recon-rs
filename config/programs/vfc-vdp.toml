@@ -1,0 +1,36 @@
+# VF Corporation VDP (HackerOne) — program-specific scope and prober configuration.
+#
+# One file, shared across every VF sub-brand target (vfc.com, vfc-int.com,
+# thenorthface.com, timberland.com, vans.com): it is the whole VF Corporation VDP
+# program's scope and rules, not one specific domain's. `matches_scope` (see
+# crates/recon-core/src/program.rs) checks a `--target` against the FULL `domains`
+# list below, so `--program config/programs/vfc-vdp.toml --target vans.com` is
+# authorized by the same file as `--target vfc.com` — no per-domain duplicate needed.
+# Every `deploy/*.env` in `~/.config/recon-rs/targets/` for this program points
+# PROGRAM_CONFIG at this exact same file; see deploy/README.md.
+#
+# Rate limit note: VF Corporation's published rules cap requests at 5/second PER HOST,
+# not in aggregate across the whole scan. recon-core's HttpProber enforces
+# `requests_per_second` per host (see ProberConfig::requests_per_second's rustdoc in
+# crates/recon-core/src/prober.rs for why), so `requests_per_second = 5` below means
+# exactly what the program's rule means — never more than 5 requests/second to any
+# single host, regardless of how many hosts this scan touches concurrently.
+#
+# Before running a real scan: replace REMPLACE_PAR_TON_USERNAME_HACKERONE below with
+# your actual HackerOne username in BOTH places (hacker_username and the
+# X-VFC-VDP header value) — recon-core does not derive one from the other, since the
+# header name/format is this program's own convention, not something the generic
+# prober should hard-code. Keep them consistent yourself.
+
+[scope]
+domains = ["*.vfc.com", "*.vfc-int.com", "*.thenorthface.com", "*.timberland.com", "*.vans.com"]
+
+[prober]
+requests_per_second = 5
+max_concurrent = 20
+timeout_ms = 5000
+user_agent = "Mozilla/5.0 (X11; VFC-VDP; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+hacker_username = "yaiito"
+
+[prober.custom_headers]
+"X-VFC-VDP" = "HackerOne-yaiito"
