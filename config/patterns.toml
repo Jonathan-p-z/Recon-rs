@@ -1,0 +1,61 @@
+[environnements]
+tokens = ["dev", "staging", "stage", "test", "uat", "qa", "preprod", "prod", "sandbox", "demo", "recette"]
+
+[regions]
+tokens = ["eu", "us", "eu-west", "eu-west-1", "us-east", "us-east-1", "apac", "fr", "de", "uk", "internal"]
+
+[fonctions_techniques]
+tokens = [
+  "api", "admin", "portal", "panel", "dashboard", "cms", "auth", "sso", "login",
+  "vpn", "mail", "smtp", "ftp", "sftp", "git", "gitlab", "github", "ci", "cd",
+  "jenkins", "jira", "confluence", "wiki", "docs", "status", "monitoring",
+  "grafana", "kibana", "elastic", "prometheus", "backup", "db", "database",
+  "cache", "redis", "queue", "worker", "webhook", "static", "cdn", "assets",
+  "media", "upload", "download", "files", "storage", "s3", "app", "app2",
+  "mobile", "internal", "intranet", "extranet", "support", "help", "helpdesk"
+]
+
+[versions]
+tokens = ["v1", "v2", "v3", "old", "new", "legacy", "beta", "alpha", "next"]
+
+[separateurs]
+tokens = ["-", "_", ""]
+
+[metier]
+tokens = []
+
+[vuln_signatures]
+[[vuln_signatures.rule]]
+name = "subdomain_takeover_s3"
+match_type = "cname_pattern"
+pattern = "s3.amazonaws.com"
+condition = "unresolved_bucket"
+priority = "critical"
+
+[[vuln_signatures.rule]]
+name = "subdomain_takeover_heroku"
+match_type = "cname_pattern"
+pattern = "herokuapp.com"
+condition = "http_404_no_such_app"
+priority = "critical"
+
+[[vuln_signatures.rule]]
+name = "exposed_jenkins"
+match_type = "title_contains"
+pattern = "Jenkins"
+condition = "no_auth_detected"
+priority = "high"
+
+[[vuln_signatures.rule]]
+name = "exposed_kibana"
+match_type = "title_contains"
+pattern = "Kibana"
+condition = "no_auth_detected"
+priority = "high"
+
+[[vuln_signatures.rule]]
+name = "outdated_apache"
+match_type = "header_pattern"
+pattern = "Apache/2.2"
+condition = "always"
+priority = "medium"
