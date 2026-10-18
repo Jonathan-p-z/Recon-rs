@@ -2,6 +2,7 @@
 name = "recon-cli"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 description = "CLI orchestrating the recon-core/recon-db pipeline for authorized bug bounty engagements, producing local Markdown reports."
 
 [dependencies]

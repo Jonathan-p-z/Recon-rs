@@ -2,6 +2,7 @@
 name = "recon-core"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 description = "Passive recon building blocks (naming pattern detection, candidate generation, vuln-signature scoring) for authorized bug bounty engagements."
 
 [dependencies]
