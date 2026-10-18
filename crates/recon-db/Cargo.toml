@@ -1,0 +1,24 @@
+[package]
+name = "recon-db"
+version = "0.1.0"
+edition = "2021"
+description = "PostgreSQL persistence and scan-to-scan change detection for recon-rs, for authorized bug bounty engagements."
+
+[dependencies]
+recon-core = { path = "../recon-core" }
+sqlx = { version = "0.8", default-features = false, features = [
+    "runtime-tokio",
+    "tls-rustls",
+    "postgres",
+    "uuid",
+    "chrono",
+    "macros",
+    "migrate",
+] }
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "1"
+dotenvy = "0.15"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
