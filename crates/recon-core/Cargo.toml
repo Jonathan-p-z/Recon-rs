@@ -1,0 +1,18 @@
+[package]
+name = "recon-core"
+version = "0.1.0"
+edition = "2021"
+description = "Passive recon building blocks (naming pattern detection, candidate generation, vuln-signature scoring) for authorized bug bounty engagements."
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+thiserror = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync"] }
+hickory-resolver = "0.24"
+governor = "0.10"
+futures = "0.3"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
+
+[dev-dependencies]
+wiremock = "0.6"

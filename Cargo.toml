@@ -1,0 +1,3 @@
+[workspace]
+members = ["crates/recon-core", "crates/recon-db", "crates/recon-cli"]
+resolver = "2"
