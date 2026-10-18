@@ -1,0 +1,5 @@
+requests_per_second = 10
+max_concurrent = 30
+timeout_ms = 5000
+user_agent = "recon-rs/0.1 (security research)"
+follow_redirects = true
