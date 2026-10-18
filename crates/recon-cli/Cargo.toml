@@ -1,0 +1,16 @@
+[package]
+name = "recon-cli"
+version = "0.1.0"
+edition = "2021"
+description = "CLI orchestrating the recon-core/recon-db pipeline for authorized bug bounty engagements, producing local Markdown reports."
+
+[dependencies]
+recon-core = { path = "../recon-core" }
+recon-db = { path = "../recon-db" }
+clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+chrono = "0.4"
+thiserror = "1"
+uuid = "1"
