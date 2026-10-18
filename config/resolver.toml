@@ -1,0 +1,4 @@
+requests_per_second = 10
+max_concurrent = 50
+timeout_ms = 3000
+dns_servers = ["1.1.1.1", "8.8.8.8"]
